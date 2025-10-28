@@ -54,7 +54,7 @@ app.get('/users/:id', async (req, res) => {
 
 // ✅ POST /users (เพิ่มผู้ใช้ใหม่)
 app.post('/users', async (req, res) => {
-  const { First_name, Full_name, Last_name, Username, password, status } = req.body;
+  const { firstname, fullname, lastname, username, password, status } = req.body;
 
   try {
     if (!password) return res.status(400).json({ error: 'Password is required' });
@@ -63,18 +63,17 @@ app.post('/users', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await db.query(
-      'INSERT INTO tbl_users (First_name, Full_name, Last_name, Username, password, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [First_name, Full_name, Last_name, Username, hashedPassword, status]
+      'INSERT INTO tbl_users (firstname, fullname, lastname, username, password, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [firstname, fullname, lastname, username, hashedPassword, status]
     );
 
     res.json({
       id: result.insertId,
-      First_name,
-      Full_name,
-      Last_name,
-      Username,
-      password,
-      status,
+      firstname, 
+      fullname, 
+      lastname, 
+      username,  
+      status
     });
   } catch (err) {
     console.error(err);
@@ -85,7 +84,7 @@ app.post('/users', async (req, res) => {
 // ✅ PUT /users/:id (แก้ไขข้อมูลผู้ใช้)
 app.put('/users/:id', async (req, res) => {
   const { id } = req.params;
-  const { First_name, Full_name, Last_name, Username, password, status } = req.body;
+  const  {firstname, fullname, lastname, username, password, status } = req.body;
 
   try {
     // ดึงข้อมูลเก่าเพื่อตรวจสอบก่อน
@@ -102,18 +101,19 @@ app.put('/users/:id', async (req, res) => {
     
 
     const [result] = await db.query(
-      'UPDATE tbl_users SET First_name = ?, Full_name = ?, Last_name = ?, Username = ?, password = ?, status = ? WHERE id = ?',
-      [First_name, Full_name, Last_name, Username, hashedPassword, status, id]
+      'UPDATE tbl_users SET firstname = ?, fullname = ?, lastname = ?, username = ?, password = ?, status = ? WHERE id = ?',
+      [firstname, fullname, lastname, username, hashedPassword, status, id]
     );
 
     res.json({
       message: 'User updated successfully',
       id,
-      First_name,
-      Full_name,
-      Last_name,
-      Username,
-      status,
+      firstname, 
+      fullname, 
+      lastname, 
+      username, 
+      password, 
+      status
     });
   } catch (err) {
     console.error(err);
